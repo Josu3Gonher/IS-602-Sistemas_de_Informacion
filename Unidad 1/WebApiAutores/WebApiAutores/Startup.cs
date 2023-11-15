@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using WebApiAutores.Entities;
 using WebApiAutores.Filters;
 using WebApiAutores.Middlewares;
+using WebApiAutores.Services;
 
 namespace WebApiAutores
 {
@@ -35,6 +36,7 @@ namespace WebApiAutores
             });
 
             services.AddTransient<MiFiltro>();
+            services.AddTransient<IEmailSenderService, EmailSenderService>();
             services.AddAutoMapper(typeof(Startup));
 
             //Add Identity

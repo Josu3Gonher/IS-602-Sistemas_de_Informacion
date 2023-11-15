@@ -244,3 +244,8 @@ C:\Users\Josue Gonzalez\Documents\Sistemas de Informacion\Unidad 1\WebApiAutores
 C:\Users\Josue Gonzalez\Documents\Sistemas de Informacion\Unidad 1\WebApiAutores\WebApiAutores\obj\Debug\net7.0\WebApiAutores.pdb
 C:\Users\Josue Gonzalez\Documents\Sistemas de Informacion\Unidad 1\WebApiAutores\WebApiAutores\obj\Debug\net7.0\WebApiAutores.genruntimeconfig.cache
 C:\Users\Josue Gonzalez\Documents\Sistemas de Informacion\Unidad 1\WebApiAutores\WebApiAutores\obj\Debug\net7.0\ref\WebApiAutores.dll
+C:\Users\Josue Gonzalez\Documents\Sistemas de Informacion\Unidad 1\WebApiAutores\WebApiAutores\bin\Debug\net7.0\BouncyCastle.Cryptography.dll
+C:\Users\Josue Gonzalez\Documents\Sistemas de Informacion\Unidad 1\WebApiAutores\WebApiAutores\bin\Debug\net7.0\MailKit.dll
+C:\Users\Josue Gonzalez\Documents\Sistemas de Informacion\Unidad 1\WebApiAutores\WebApiAutores\bin\Debug\net7.0\MimeKit.dll
+C:\Users\Josue Gonzalez\Documents\Sistemas de Informacion\Unidad 1\WebApiAutores\WebApiAutores\bin\Debug\net7.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\Josue Gonzalez\Documents\Sistemas de Informacion\Unidad 1\WebApiAutores\WebApiAutores\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Security.Cryptography.Pkcs.dll

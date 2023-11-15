@@ -6,6 +6,8 @@ using System.Security.Claims;
 using System.Text;
 using WebApiAutores.Dtos;
 using WebApiAutores.Dtos.Auth;
+using WebApiAutores.Helpers;
+using WebApiAutores.Services;
 
 namespace WebApiAutores.Controllers
 {
@@ -16,15 +18,18 @@ namespace WebApiAutores.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly IEmailSenderService _emailSenderService;
 
         public AuthController(
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IEmailSenderService emailSenderService)
         {
             this._signInManager = signInManager;
             this._userManager = userManager;
             this._configuration = configuration;
+            this._emailSenderService = emailSenderService;
         }
 
         [HttpPost("login")] // auth/login
@@ -60,6 +65,9 @@ namespace WebApiAutores.Controllers
                     TokenExpiration = jwtToken.ValidTo,
                     Token = new JwtSecurityTokenHandler().WriteToken(jwtToken)
                 };
+
+                await _emailSenderService.SendEmailAsync(user.Email, "WebApiAutores - Inicio de Sesion",
+                                                        EmailTemplates.LoginTemplate(user.Email));
 
                 return Ok(new ResponseDto<LoginResponseDto>
                 {
@@ -108,7 +116,11 @@ namespace WebApiAutores.Controllers
                 });
             }
 
-            return null;
+            return Ok(new ResponseDto<object>
+            {
+                Status = true,
+                Message = $"{dto.Email} registrado correctamente"
+            });
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
