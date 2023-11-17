@@ -34,9 +34,10 @@ namespace WebApiAutores
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
-
+            
             services.AddTransient<MiFiltro>();
             services.AddTransient<IEmailSenderService, EmailSenderService>();
+            services.AddHttpContextAccessor();
             services.AddAutoMapper(typeof(Startup));
 
             //Add Identity

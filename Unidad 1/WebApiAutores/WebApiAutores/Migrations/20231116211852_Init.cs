@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebApiAutores.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIdentity : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,21 +17,19 @@ namespace WebApiAutores.Migrations
             migrationBuilder.EnsureSchema(
                 name: "security");
 
-            migrationBuilder.RenameTable(
-                name: "books",
-                newName: "books",
-                newSchema: "transacctional");
-
-            migrationBuilder.RenameTable(
+            migrationBuilder.CreateTable(
                 name: "autores",
-                newName: "autores",
-                newSchema: "transacctional");
-
-            migrationBuilder.RenameColumn(
-                name: "nombre",
                 schema: "transacctional",
-                table: "autores",
-                newName: "name");
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    name = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_autores", x => x.id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "roles",
@@ -72,6 +70,29 @@ namespace WebApiAutores.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "books",
+                schema: "transacctional",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    isbn = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    publication_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    autor_id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_books", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_books_autores_autor_id",
+                        column: x => x.autor_id,
+                        principalSchema: "transacctional",
+                        principalTable: "autores",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -191,6 +212,145 @@ namespace WebApiAutores.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "reviews",
+                schema: "transacctional",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    descripcion = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    calificacion = table.Column<int>(type: "int", nullable: false),
+                    user_id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    book_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_reviews", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_reviews_books_book_id",
+                        column: x => x.book_id,
+                        principalSchema: "transacctional",
+                        principalTable: "books",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_reviews_users_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "security",
+                        principalTable: "users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "comentarios",
+                schema: "transacctional",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    descripcion = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    user_id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    review_id = table.Column<int>(type: "int", nullable: false),
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_comentarios", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_comentarios_reviews_review_id",
+                        column: x => x.review_id,
+                        principalSchema: "transacctional",
+                        principalTable: "reviews",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_comentarios_users_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "security",
+                        principalTable: "users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "respuestas_comentarios",
+                schema: "transacctional",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    respuesta_comentario = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    user_id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    comentario_id = table.Column<int>(type: "int", nullable: false),
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_respuestas_comentarios", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_respuestas_comentarios_comentarios_comentario_id",
+                        column: x => x.comentario_id,
+                        principalSchema: "transacctional",
+                        principalTable: "comentarios",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_respuestas_comentarios_users_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "security",
+                        principalTable: "users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_books_autor_id",
+                schema: "transacctional",
+                table: "books",
+                column: "autor_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_books_isbn",
+                schema: "transacctional",
+                table: "books",
+                column: "isbn",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_comentarios_review_id",
+                schema: "transacctional",
+                table: "comentarios",
+                column: "review_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_comentarios_user_id",
+                schema: "transacctional",
+                table: "comentarios",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_respuestas_comentarios_comentario_id",
+                schema: "transacctional",
+                table: "respuestas_comentarios",
+                column: "comentario_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_respuestas_comentarios_user_id",
+                schema: "transacctional",
+                table: "respuestas_comentarios",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_reviews_book_id",
+                schema: "transacctional",
+                table: "reviews",
+                column: "book_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_reviews_user_id",
+                schema: "transacctional",
+                table: "reviews",
+                column: "user_id");
+
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 schema: "security",
@@ -242,6 +402,10 @@ namespace WebApiAutores.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "respuestas_comentarios",
+                schema: "transacctional");
+
+            migrationBuilder.DropTable(
                 name: "roles_claims",
                 schema: "security");
 
@@ -262,27 +426,28 @@ namespace WebApiAutores.Migrations
                 schema: "security");
 
             migrationBuilder.DropTable(
+                name: "comentarios",
+                schema: "transacctional");
+
+            migrationBuilder.DropTable(
                 name: "roles",
                 schema: "security");
+
+            migrationBuilder.DropTable(
+                name: "reviews",
+                schema: "transacctional");
+
+            migrationBuilder.DropTable(
+                name: "books",
+                schema: "transacctional");
 
             migrationBuilder.DropTable(
                 name: "users",
                 schema: "security");
 
-            migrationBuilder.RenameTable(
-                name: "books",
-                schema: "transacctional",
-                newName: "books");
-
-            migrationBuilder.RenameTable(
+            migrationBuilder.DropTable(
                 name: "autores",
-                schema: "transacctional",
-                newName: "autores");
-
-            migrationBuilder.RenameColumn(
-                name: "name",
-                table: "autores",
-                newName: "nombre");
+                schema: "transacctional");
         }
     }
 }

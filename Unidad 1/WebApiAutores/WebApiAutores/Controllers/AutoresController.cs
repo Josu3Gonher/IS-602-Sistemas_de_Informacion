@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApiAutores.Dtos;
 using WebApiAutores.Dtos.Autores;
-using WebApiAutores.Dtos.Books;
 using WebApiAutores.Entities;
-using WebApiAutores.Filters;
 
 namespace WebApiAutores.Controllers
 {
@@ -65,7 +62,6 @@ namespace WebApiAutores.Controllers
         [HttpPost]
         public async Task<ActionResult<ResponseDto<AutorDto>>> Post(AutorCreateDto dto)
         {
-
             var autor = _mapper.Map<Autor>(dto);
 
             _context.Add(autor);

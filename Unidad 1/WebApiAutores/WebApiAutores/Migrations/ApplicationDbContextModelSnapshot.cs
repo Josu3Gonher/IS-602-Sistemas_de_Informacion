@@ -278,6 +278,121 @@ namespace WebApiAutores.Migrations
                     b.ToTable("books", "transacctional");
                 });
 
+            modelBuilder.Entity("WebApiAutores.Entities.Comentario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DescripcionComentario")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("descripcion");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("fecha");
+
+                    b.Property<int>("ReviewId")
+                        .HasColumnType("int")
+                        .HasColumnName("review_id");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReviewId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("comentarios", "transacctional");
+                });
+
+            modelBuilder.Entity("WebApiAutores.Entities.RespuestaComentario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ComentarioId")
+                        .HasColumnType("int")
+                        .HasColumnName("comentario_id");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("fecha");
+
+                    b.Property<string>("RespuestaAlComentario")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("respuesta_comentario");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ComentarioId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("respuestas_comentarios", "transacctional");
+                });
+
+            modelBuilder.Entity("WebApiAutores.Entities.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("book_id");
+
+                    b.Property<int>("Calificacion")
+                        .HasColumnType("int")
+                        .HasColumnName("calificacion");
+
+                    b.Property<string>("DescripcionReview")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("descripcion");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("fecha");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("reviews", "transacctional");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -340,9 +455,76 @@ namespace WebApiAutores.Migrations
                     b.Navigation("Autor");
                 });
 
+            modelBuilder.Entity("WebApiAutores.Entities.Comentario", b =>
+                {
+                    b.HasOne("WebApiAutores.Entities.Review", "Review")
+                        .WithMany("Comentarios")
+                        .HasForeignKey("ReviewId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Review");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("WebApiAutores.Entities.RespuestaComentario", b =>
+                {
+                    b.HasOne("WebApiAutores.Entities.Comentario", "Comentario")
+                        .WithMany("Respuestas")
+                        .HasForeignKey("ComentarioId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Comentario");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("WebApiAutores.Entities.Review", b =>
+                {
+                    b.HasOne("WebApiAutores.Entities.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("WebApiAutores.Entities.Autor", b =>
                 {
                     b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("WebApiAutores.Entities.Comentario", b =>
+                {
+                    b.Navigation("Respuestas");
+                });
+
+            modelBuilder.Entity("WebApiAutores.Entities.Review", b =>
+                {
+                    b.Navigation("Comentarios");
                 });
 #pragma warning restore 612, 618
         }
